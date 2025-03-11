@@ -22,6 +22,18 @@ local function get_opts()
                 capabilities = capabilities,
                 settings = { Lua = opts }
             }
+        end,
+
+        -- Zig specific
+        ["zls"] = function()
+            local opts = {
+                cmd = { "/usr/bin/zls" }
+            }
+
+            lspconfig.zls.setup {
+                capabilities = capabilities,
+                settings = opts
+            }
         end
 
     }
@@ -40,6 +52,7 @@ local keymaps = {
 
     -- Code
     { "<leader>ca", vim.lsp.buf.code_action,    desc = "[C]ode [A]actions" },
+    { "<leader>lr", vim.lsp.buf.rename,         desc = "[L]sp [R]ename" },
 }
 
 local plugins = {
