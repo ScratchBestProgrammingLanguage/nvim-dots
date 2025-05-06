@@ -1,5 +1,6 @@
 local function config()
     local cmp = require("cmp")
+    local luasnip = require("luasnip")
 
     local opts = {
         snippet = {
@@ -7,10 +8,39 @@ local function config()
                 require("luasnip").lsp_expand(args.body)
             end,
         },
+        -- Looks like ass I've copied and pasted ts
         mapping = {
-            ["<C-n>"] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Select },
-            ["<C-b>"] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Select },
-            ["<Tab>"] = cmp.mapping.confirm({ select = true })
+            ["<C-n>"] = cmp.mapping(function(fallback)
+                if cmp.visible() then
+                    cmp.select_next_item()
+                elseif luasnip.locally_jumpable(1) then
+                    luasnip.jump(1)
+                else
+                    fallback()
+                end
+            end, { "i", "s" }),
+            ["<C-b>"] = cmp.mapping(function(fallback)
+                if cmp.visible() then
+                    cmp.select_prev_item()
+                elseif luasnip.locally_jumpable(-1) then
+                    luasnip.jump(-1)
+                else
+                    fallback()
+                end
+            end, { "i", "s" }),
+            ["<Tab>"] = cmp.mapping(function(fallback)
+                if cmp.visible() then
+                    if luasnip.expandable() then
+                        luasnip.expand()
+                    else
+                        cmp.confirm({
+                            select = true,
+                        })
+                    end
+                else
+                    fallback()
+                end
+            end),
         },
         sources = cmp.config.sources({
             { name = "nvim_lsp" },
