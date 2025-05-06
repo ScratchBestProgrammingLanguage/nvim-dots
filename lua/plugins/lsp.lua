@@ -40,6 +40,9 @@ local function get_opts()
 
     -- Enable inlay hints
     vim.lsp.inlay_hint.enable(true)
+
+    -- Enable inlay diagnostics
+    vim.diagnostic.config({ virtual_text = true })
     return { handlers = handlers }
 end
 
